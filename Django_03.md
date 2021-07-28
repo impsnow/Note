@@ -19,3 +19,4 @@ class EmpForm(forms.Form):
 	
 	
 ```
+表单类的字段会映射到HTML表单的 <input> 元素。 ModelForm 通过 Form 映射模型类的字段到HTML表单的 <input> 元素
