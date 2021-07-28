@@ -1,0 +1,48 @@
+# TCP
+### concept:
+SYN: (同步序列编号,Synchronize Sequence Numbers)
+ACK: (确认编号,Acknowledgement Number)
+FIN: (结束标志,FINish)
+
+### flag
+S SYN
+F FIN
+P PUSH data push
+R RST connection reset
+. ACK
+
+### tcpdump
+```
+tcpdump -S tcp port 22 -nn -i eth0 -c 20 > tcpdump.txt
+```
+四次挥手：
+https://mp.weixin.qq.com/s/o7qF2yti9KaoXTM6SKMdzA
+
+netstat -ant|awk '/^tcp/ {++S[$NF]} END {for(a in S) print (a,S[a])}'
+
+
+
+# OSI open system interconnect 七层模型
+https://blog.csdn.net/yaopeng_2005/article/details/7064869
+
+# 概念
+
+OSI模型
+TCP/IP模型
+
+数据报在链路层会：
+分组交换
+存储转发传输
+
+### 网络层：
+IP ：网络标识 + 主机标识
+
+位 bit
+字节 byte
+1字节 = 8 bit
+bps 是 bits per second 的简称。一般数据机及网络通讯的传输速率都是以「bps」为单位。如56Kbps、100.0Mbps 等等。
+Bps即是Byte per second 的简称。而电脑一般都以Bps 显示速度，如1Mbps 大约等同 128 KBps。
+
+TTL 是IP协议中的数据报内容 最大255 每经过一个路由减1
+不同链路层能承载的数据报大小（MTU）不一样，以太网1500
+数据报会在链路层分片（fragement），分片重组在目标主机中进行
