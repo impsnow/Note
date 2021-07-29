@@ -1,3 +1,5 @@
+https://www.liujiangblog.com/course/django/95
+
 ## Django ORM - 单表实例
 增：
 ```
@@ -20,9 +22,31 @@ adding：一个标识符，如果当前的模型实例还没有保存到数据�
 db：一个字符串指向某个数据库，当前模型实例是从该数据库中读取出来的。
 
 ## 模型方法:
+```
+class Person(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    birth_date = models.DateField()
 
+    def baby_boomer_status(self):
+        "Returns the person's baby-boomer status."
+        import datetime
+        if self.birth_date < datetime.date(1945, 8, 1):
+            return "Pre-boomer"
+        elif self.birth_date < datetime.date(1965, 1, 1):
+            return "Baby boomer"
+        else:
+            return "Post-boomer"
 
-
+    @property
+    def full_name(self):
+        "Returns the person's full name."
+        return '%s %s' % (self.first_name, self.last_name)
+        
+    def __str__(self):
+        return self.first_name + self.last_name
+   ```     
+        
 
 
 
