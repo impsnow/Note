@@ -111,5 +111,27 @@ def get_name(request):
 
 
 
+## 表单资源（ Media 类）
+静态定义:
+```
+from django import forms
 
+class CalendarWidget(forms.TextInput):
+class Media:
+    css = {
+        'screen': ('pretty.css',),
+        'tv,projector': ('lo_res.css',),
+        'print': ('newspaper.css',)
+    }
+    js = ('animations.js', 'actions.js')
+```
+	
+把 Media 作为动态属性:
+```
+class CalendarWidget(forms.TextInput):
+    @property
+    def media(self):
+        return forms.Media(css={'all': ('pretty.css',)},
+                           js=('animations.js', 'actions.js'))
+```
 
