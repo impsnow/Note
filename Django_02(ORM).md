@@ -83,5 +83,24 @@ class Person(models.Model):
 
 如果你要关联的模型位于当前模型之后，则需要通过字符串的方式进行引用
 
+manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, **options)
+
+on_delete:
+CASCADE：模拟SQL语言中的ON DELETE CASCADE约束，将定义有外键的模型对象同时删除！
+PROTECT:阻止上面的删除操作，但是弹出ProtectedError异常
+SET_NULL：将外键字段设为null，只有当字段设置了null=True时，方可使用该值。
+SET_DEFAULT:将外键字段设为默认值。只有当字段设置了default参数时，方可使用。
+
+### 多对多（ManyToManyField）
+ManyToManyField(to, **options)
+
+多对多的字段可以定义在任何的一方，请尽量定义在符合人们思维习惯的一方
+
+建议为多对多字段名使用复数形式。
+
+
+
+### 一对一（OneToOneField）
+OneToOneField(to, on_delete, **options)
 
 
