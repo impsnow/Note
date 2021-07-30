@@ -45,3 +45,10 @@ suse:
 zypper ref
 zypper up -y
 ```
+
+# shell
+脚本推出
+exit 1
+set -e
+trap + kill
+
