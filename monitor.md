@@ -5,3 +5,12 @@ self-healing server :For TDC Windows servers without SSH enabled, healing script
 工作模式：
 nrpe （nscp）：linux agent
 nsclient（nscp）： windows client
+
+
+# zabbix
+
+# prometheus
+exporter+prometheus+grafana+alertmanager
+
+# elasticsearch
+filebeat+logstash+elasticsearch+kibana
