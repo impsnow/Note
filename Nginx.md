@@ -79,3 +79,96 @@ systemctl restart nginx
         return 200 'It works';
     }
 ```
+
+### php fastcgi
+
+```
+    location ~* ^/ma-api/(.*\.php) {
+        set $real_script_name $1;
+        fastcgi_pass   unix:/dev/shm/php-fpm.sock;
+        fastcgi_index   index.php;
+
+        include fastcgi_params;
+        #set $real_script_name $fastcgi_script_name;
+        if ($fastcgi_script_name ~ "^/ma-api/(.+\.php)(/.+)$") {
+            set $real_script_name $1;
+            set $path_info $2;
+        }   
+        fastcgi_param SCRIPT_FILENAME /data/a2/sites/ma-api/public/$real_script_name;
+        fastcgi_param SCRIPT_NAME $real_script_name;
+        fastcgi_param PATH_INFO $path_info;
+    }
+
+```
+### proxy_pass
+```
+upstream td-campaign {
+    server         172.17.5.16:28004 max_fails=10 fail_timeout=20s weight=100;
+    server         172.17.5.16:28005 max_fails=10 fail_timeout=20s weight=100;
+    keepalive      50;
+}
+
+...
+    proxy_redirect          off;
+    proxy_set_header   Host             $host;
+    proxy_set_header   X-Real-IP        $remote_addr;
+    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_set_header   X-Request-Id     $request_id;
+    proxy_cache_use_stale   error timeout invalid_header updating http_500 http_502 http_503 http_504;
+
+    proxy_connect_timeout   300s;
+    proxy_send_timeout      300s;
+    proxy_read_timeout      300s;
+
+    client_max_body_size     200m;
+    client_body_buffer_size 1024k;
+    proxy_buffer_size 32k;
+    proxy_buffers 64 32k;
+
+    proxy_http_version      1.1;
+    proxy_set_header        Connection "";
+    
+    
+    location ~* ^/insight/.+ {
+        proxy_pass              http://td-insight;
+        proxy_http_version      1.1;
+        }
+```
+
+### default
+
+```
+        error_page   404 = /404.html;
+        error_page   500 502 503 504  = /50x.html;
+        
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+        
+        location = /404.html {
+            root   /usr/share/nginx/html;
+        }
+
+        location = /error {
+            root   /usr/share/nginx/html;
+        }
+        
+        location ~* \.(txt|doc|MD|md)$ { 
+			root /usr/share/nginx/html; 
+			deny all; 
+		}
+        
+        location = /robots.txt {
+            root /usr/share/nginx/html;
+            allow all;
+			log_not_found off;
+			access_log off;
+        }
+        
+        location = /favicon.ico {
+			log_not_found off;
+			access_log off;
+		}
+    
+    
+```
