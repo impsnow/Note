@@ -169,6 +169,74 @@ upstream td-campaign {
 			log_not_found off;
 			access_log off;
 		}
+    location = /slb {
+        default_type text/html;
+        access_log off;
+        return 200 'It works';
+    }      
     
-    
+```
+# ES
+
+
+
+### nginx 日志格式配置
+
+```
+    log_format  main  '$remote_addr $host $remote_user [$time_local] $request_method "$uri" "$query_string" '
+                      '$status $body_bytes_sent "$http_referer" $upstream_status $upstream_addr $request_time $upstream_response_time '
+                      '"$http_user_agent" "$http_x_forwarded_for" ';
+```
+### logstash 配置
+
+vim /data/logstash/patterns/nginx
+```
+STATUS ([0-9.]{0,3}[, ]{0,2})+
+HOSTPORT1 (%{IPV4}:%{POSINT}[, ]{0,2})+ 
+UPSTREAM_ADDR (?:%{HOSTPORT1}|.*)
+FORWORD (?:%{IPV4}[,]?[ ]?)+|.*
+
+NGINXACCESS %{IPV4:remote_addr} (?:%{HOSTNAME:http_host}|-) (?:%{USERNAME:remote_user}|-) \[%{HTTPDATE:log_date}\] %{WORD:request_method} \"%{PATH:baseurl}\" \"(?:%{NOTSPACE:query_string}|-)\" %{STATUS:http_status_code} (?:%{BASE10NUM:body_bytes_sent}|-) \"%{GREEDYDATA:http_referer}\" (?:%{STATUS:upstream_status}|-) (?:%{UPSTREAM_ADDR:upstream_addr}|-) (?:%{NUMBER:request_time}|-) (?:%{NUMBER:upstream_response_time}|-) \"(?:%{GREEDYDATA:user_agent}|-)\" \"(%{FORWORD:x_forword_for}|-)\"
+```
+### 配置logstash filter：
+
+```
+    else if [log_type] == "nginx_access" {
+
+                grok {
+                        patterns_dir => "/data/logstash/patterns"  
+                        match => {
+                            "message" => "%{NGINXACCESS}"
+                        }     
+
+                }
+
+                mutate {
+                    convert => [ "request_time", "float"]
+                    convert => [ "upstream_response_time", "float"]
+                }
+
+                date {
+                        match => [ "log_date" , "dd/MMM/YYYY:HH:mm:ss Z" ]
+                        target => "@timestamp"
+                        remove_field => ["message"]
+                }
+
+
+        }
+```
+
+- 使用convert转换字段数据类型为float，可方便在kibana作图
+
+### 配置output：
+```
+    if [log_type] == "nginx_access" {
+            elasticsearch {
+                hosts => [ "127.0.0.1:9200" ]
+                manage_template => false
+                index => "%{log_type}-%{env}-%{+YYYY.MM.dd}"
+                flush_size => 1000
+                idle_flush_time => 5
+            }
+    }
 ```
