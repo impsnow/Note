@@ -184,6 +184,8 @@ p.center {text-align:center;}
 插入样式表：
 （内联样式）Inline style > （内部样式）Internal style sheet >（外部样式）External style sheet > 浏览器默认样式
 
+margin、border、padding、context。
+
 #
 AJAX 是与服务器交换数据并更新部分网页的技术，在不重新加载整个页面的情况下
 JavaScript 框架库 - jQuery
