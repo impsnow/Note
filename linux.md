@@ -49,6 +49,31 @@ zypper up -y
 # shell
 脚本推出
 exit 1
+
 set -e
+
 trap + kill
+
+# supervisor
+
+```
+environment=JMX_OPTIONS=""
+command=/var/apps/batch/batch-task/bin/start.sh -mq
+autostart=true
+autorestart=true
+stdout_logfile=/var/apps/logs/supervisor/batch-task-start.stdout.log
+stderr_logfile=/var/apps/logs/supervisor/batch-task-start.stderr.log
+stdout_logfile_maxbytes=100MB
+stdout_logfile_backups=5
+stdout_capture_maxbytes=1MB
+stdout_events_enabled=false
+stderr_logfile_maxbytes=100MB
+stderr_logfile_backups=5
+stderr_capture_maxbytes=1MB
+stderr_events_enabled=false
+loglevel=info
+priority=1100
+user=marketin
+startsecs=5
+```
 
