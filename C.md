@@ -100,6 +100,72 @@ type *var-name
 
 Null 空指针 内存位置为0，假定为不指向任何东西
 
+## 数组
+以存储一个固定大小的相同类型元素的顺序集合
+
+type arrayName [ arraySize ];
+
+arrayname[num索引] 访问元素
+
+## 结构体
+
+可存储不同类型数据项的变量
+使用.访问成员
+可作为函数参数： viod printBook( struct Book book)    /* 声明函数内book变量，类型为BOOK */
+```
+struct [struct tag]
+{
+ 
+}[one or more struct var]
+```
+指向结构的指针
+```
+#include <stdio.h>
+#include <string.h>
+ 
+struct Books
+{
+   char  title[50];  可容纳50个char 的数组title
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+};
+ 
+/* 函数声明 */
+void printBook( struct Books *book );
+int main( )
+{
+   struct Books Book1;        /* 声明 Book1，类型为 Books */
+
+   /* Book1 详述 */
+   strcpy( Book1.title, "C Programming");
+   strcpy( Book1.author, "Nuha Ali"); 
+   strcpy( Book1.subject, "C Programming Tutorial");
+   Book1.book_id = 6495407;
+ 
+   /* 通过传 Book1 的地址来输出 Book1 信息 */
+   printBook( &Book1 );
+ 
+   /* 通过传 Book2 的地址来输出 Book2 信息 */
+   printBook( &Book2 );
+ 
+   return 0;
+}
+void printBook( struct Books *book )
+{
+   printf( "Book title : %s\n", book->title);
+   printf( "Book author : %s\n", book->author);
+   printf( "Book subject : %s\n", book->subject);
+   printf( "Book book_id : %d\n", book->book_id);
+}
+```
+## 位域
 
 
+## 字符串
+
+
+## 共用体
+
+## typeof
 
