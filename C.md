@@ -160,12 +160,52 @@ void printBook( struct Books *book )
 }
 ```
 ## 位域
+带有预定义宽度的变量
 
+从0-7的变量。
+```
+struct {
+  unsigned int age:3;
+} Age;
+```
 
 ## 字符串
+使用null字符'' 终止的字符数组
 
+char greeting[6] = {'H','e','l','l','o',''};
+
+OR
+
+char greeting[] = "Hello";
 
 ## 共用体
+在相同的内存位置存储不同的数据类型。任何时候只有一个成员带有值
+```
+union DATA
+{
+ int i ;
+ float f;
+ char str[20];
+} data;
 
+将占用20字节
+
+```
 ## typeof
+可为类型取新的名字
+
+```
+typedef struct Books
+{
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+} Book;
+ 
+
+   Book book;
+ 
+```
+
 
