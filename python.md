@@ -1,7 +1,7 @@
 *=		+=
 
 ## 数据类型
-
+```
 string，list，tulpe，dict
 方法 函数
 string： 下标 切片[起始：结束：步长] .find() .count() .replace() .split() 
@@ -9,8 +9,9 @@ list: append() extend() insert(下标,xx) del  pop() remove(xx) sort() reserve()
 tulpe：
 dict：dict01.get(XX,defualt)    del dict['Name']   .keys() .values() .items()
 公共方法： + * in not in len() max() min() del
-
+```
 ## 函数
+```
 def 函数名()：
 	"""
 	DOC
@@ -29,9 +30,11 @@ eval(): eval('a+20') 字符串可以的话被执行
 lambda 参数：语句  ：  sum = lambda 4,5:a+b
 range： range(开始，结束，步长) 返回列表 整数
 列表推导式： list01 = [ x for x in range(10) ]
-
+```
 ## 对象 class
+
 类： 类名，属性，方法
+
 对象（实例）
 
 __init__(self，tom，18)  传入参数 给属性
