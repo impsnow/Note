@@ -94,3 +94,13 @@ def log(func):
 ### 迭代器 生成器
 
 ### 静态代码分析工具
+
+## 虚拟环境
+```
+virtualenv --no-site-packages myvenv
+source venv/bin/activate
+deactivate
+
+# python3.3之后自带venv ，进入退出方法与virtualenv一致
+python -m venv myvenv
+```
