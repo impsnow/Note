@@ -42,32 +42,45 @@ JavaScript 可以通过不同的方式来输出数据：
 使用 console.log() 写入到浏览器的控制台。
 ```
 ### 语法
+字面量：固定的值 ，数字，字符串，表达式，数组，对象（object），函数
+
 字符串（String）字面量 可以使用单引号或双引号
+
 数组，对象:array ， object
+
 var cars=["Saab","Volvo","BMW"];
+
 var arr= new Array()； 
 
 
 var person = {firstName:"John", lastName:"Doe", age:50, eyeColor:"blue"};
 
 对象的方法定义了一个函数，并作为对象的属性存储。
+
 对象方法通过添加 () 调用 (作为一个函数)。
+
 不加（）返回函数表达式
 
 函数（Function）字面量 定义一个函数：
+
 function myFunction(a, b) { return a * b;}
-var person={firstname:"John", lastname:"Doe", id:5566};
 
 
+## 变量
 使用**关键字** var 来定义变量， 使用等号来为变量赋值
+
 可以在声明变量时对其赋值：
+
 var carname="Volvo";
+
 可以通过将变量的值设置为 null 来清空变量。
+
 局部变量会在函数运行以后被删除。
+
 全局变量会在页面关闭后被删除。
 
 
-注释：
+## 注释：
 // 我不会执行
 多行注释以 /* 开始，以 */ 结尾。
 
