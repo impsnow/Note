@@ -2,9 +2,13 @@
 taskmanager 中显示的内存为 private pyhsical memorary
 
 resource monitor（remon.exe）：
+
 commit: working set + pagefile
+
 working set: shareable + private
+
 shareable: 共享的物理内存
+
 private: 专用的物理内存
 
 
