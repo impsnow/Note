@@ -208,4 +208,68 @@ typedef struct Books
  
 ```
 
+### 预处理器
+会指示编译器在实际编译之前完成所需的预处理（文本替换工具）
 
+宏： 使用#define 定义用于替换的字符串 ， 增强可读性
+
+#include 包含一个源代码文件
+
+```
+#undef 取消已定义的宏
+#ifdef 如果宏已经定义，则返回真
+#inndef 如果宏没有定义，则返回真
+
+#ifndef MESSAGE
+   #define MESSAGE "You wish!"
+#endif
+
+预定义宏：
+__DATE__	当前日期，一个以 "MMM DD YYYY" 格式表示的字符常量。
+__TIME__	当前时间，一个以 "HH:MM:SS" 格式表示的字符常量。
+__FILE__	这会包含当前文件名，一个字符串常量。
+__LINE__	这会包含当前行号，一个十进制常量。
+__STDC__	当编译器以 ANSI 标准编译时，则定义为 1。
+
+宏处理器运算符：
+宏延续运算符 \
+字符串常量化运算符 #
+#include <stdio.h>
+#define  message_for(a, b)  \
+    printf(#a " and " #b ": We love you!\n")
+int main(void)
+{
+   message_for(Carole, Debra);
+   return 0;
+}
+
+标记粘贴运算符 ##
+defined 运算符   用来确定一个标识符是否已经使用 #define 定义过
+```
+参数化的宏 ： 可以用来模拟函数
+
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+
+### 头文件
+头文件是扩展名为 .h 的文件，包含了 C 函数声明和宏定义，被多个源文件中引用共享。有两种类型的头文件：程序员编写的头文件和编译器自带的头文件。
+
+引用系统头文件：
+
+#include <file>
+ 
+引用用户头文件
+ 
+ #include "file"
+```
+ 只引用一次头文件:
+#ifndef HEADER_FILE
+#define HEADER_FILE
+ 
+ 
+ 有条件引用
+  #define SYSTEM_H "system_1.h"
+ ...
+ #include SYSTEM_H
+ YSTEM_H 可通过 -D 选项被您的 Makefile 定义。
+ 
+```
