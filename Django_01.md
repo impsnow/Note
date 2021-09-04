@@ -78,7 +78,7 @@ ifequal/ifnotequal 标签:
 
 {# 这是一个注释 #}
 
-include 标签:
+include 标签: {% include %} 标签允许在模板中包含其它的模板的内容。
 {% include "nav.html" %}
 
 csrf_token 用于form表单中，作用是跨站请求伪造保护。
