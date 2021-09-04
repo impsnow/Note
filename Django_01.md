@@ -227,9 +227,11 @@ def index(request，year):
 
 路由分发(include)
 
-**反向解析**
+### 反向解析(路由别名)
+
 反向解析一般用在模板中的超链接及视图中的重定向。
 
+```
 普通路径：
 在 urls.py 中给路由起别名，name="路由别名"。
 path("login1/", views.login, name="login")
@@ -254,13 +256,19 @@ return redirect(reverse("login",kwargs={"year":3333}))
 在模板 templates 中的 HTML 文件中，利用 {% url "路由别名" 分组名=符合正则匹配的参数 %} 反向解析。
 <form action="{% url 'login' year=3333 %}" method="post">
 
-**命名空间**
+### 命名空间(路由分发)
+
 include(("app名称：urls"，"app名称"))
+path("app01/", include(("app01.urls","app01"))) 
+
 在 app01/urls.py 中起相同的路由别名。
 path("login/", views.login, name="login")
 
 return redirect(reverse("app01:login")
 {% url "app名称：路由别名" %}
+```
+访问时app01/login/
+
 
 ### Django Admin 管理工具
 	
