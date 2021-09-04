@@ -145,8 +145,11 @@ django-admin.py startapp TestModel
 ### 表单
 request.post["HTML中ID"]
 每个视图函数的第一个参数是一个 HttpRequest 对象,如request
+
 META 中这些头加上前缀 HTTP_ 为 Key, 冒号(:)后面的为 Value
+
 if request.method == "POST"来判断是否使用HTTP POST方法
+
 POST不包括file-upload信息。参见FILES属性。
 
 GET和POST属性是django.http.QueryDict类的实例。
@@ -162,17 +165,26 @@ def search(request):
 
 ### 视图
 请求对象：
-request.get()：返回字符串，如果该键对应有多个值，取出该键的最后一个值。
+request.get()：返回键值对应的字符串，如果该键对应有多个值，取出该键的最后一个值。
 
-body
-path
+request.body
+
+request.path
+
+request.method
+
+
 响应对象：
+
 主要有三种形式：HttpResponse()、render()、redirect()。
+
 HttpResponse(): 返回文本，可渲染html标签
+
 render(): 返回文本，第一个参数为 request，
+
 	第二个参数为字符串（页面名称），
-	第三个参数为字典（可选参数，向页面传递的参数：
-	键为页面参数名，值为views参数名）。
+	
+	第三个参数为字典（可选参数，向页面传递的参数：	键为页面参数名，值为views参数名）。
 ```
 return render(request,"runoob.html",{"name":name})
 ```
@@ -198,6 +210,7 @@ urlpatterns = [
 ]
 ```
 正则路径中的分组
+
 正则路径中的无名分组：
 ```
 urlpatterns = [
@@ -250,6 +263,7 @@ return redirect(reverse("app01:login")
 {% url "app名称：路由别名" %}
 
 ### Django Admin 管理工具
+	
 通常我们在生成项目时会在 urls.py 中自动设置好，我们只需去掉注释即可。
 python manage.py createsuperuser
 
