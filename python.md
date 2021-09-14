@@ -104,3 +104,18 @@ deactivate
 # python3.3之后自带venv ，进入退出方法与virtualenv一致
 python -m venv myvenv
 ```
+
+### 下划线使用
+
+_var   ：命名约定，内部使用，私有 import* 不会导入
+ 
+var_    ：命名约定，避免与关键字冲突
+
+__var  ：在类中触发名称修饰，防止子类重写， 变成 __classname_methodname
+
+__var__  ： 特殊方法
+
+_ 临时的变量
+
+
+
