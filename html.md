@@ -197,7 +197,7 @@ p.center {text-align:center;}
 插入样式表：
 （内联样式）Inline style > （内部样式）Internal style sheet >（外部样式）External style sheet > 浏览器默认样式
 
-### div定位
+### div 浮动
 浮动可以理解为让某个div元素脱离标准流，漂浮在标准流之上，和标准流不是一个层次。
 
 
@@ -214,9 +214,16 @@ CSS overflow 属性用于控制内容溢出元素框时显示的方式。
 
 margin、border、padding、context。
 
+### 定位
+position：relative 相对定位，以原有位置移动，保留占用原有定位
 
+position：absolute 绝对定位，不会占用原有位置 ，外层有定位时（非static）以父类为参考点。 外层无定位时以00点参考。如父层没有设置position，，寻找设定过定位的外层元素作为参考点
 
+position：fixed 固定定位，相对于窗口进行定位
 
+position：static 默认值
+
+Z-index  设置z轴的距离，设置元素显示顺序，只支持定位元素
 
 #
 AJAX 是与服务器交换数据并更新部分网页的技术，在不重新加载整个页面的情况下
