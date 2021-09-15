@@ -225,6 +225,14 @@ position：static 默认值
 
 Z-index  设置z轴的距离，设置元素显示顺序，只支持定位元素
 
+### display属性
+block 指定对象为块元素，如div
+
+inline 内联元素，如span
+
+inline-block
+
+
 #
 AJAX 是与服务器交换数据并更新部分网页的技术，在不重新加载整个页面的情况下
 JavaScript 框架库 - jQuery
