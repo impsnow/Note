@@ -232,6 +232,7 @@ inline 内联元素，如span
 
 inline-block
 
+none 用来隐藏元素，不占据空间。visibili:hidden 只隐藏内容，占据空间。opaci：0 设置透明度
 
 #
 AJAX 是与服务器交换数据并更新部分网页的技术，在不重新加载整个页面的情况下
