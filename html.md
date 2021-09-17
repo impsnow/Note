@@ -212,7 +212,7 @@ https://www.cnblogs.com/acorn/p/5249089.html
 
 CSS overflow 属性用于控制内容溢出元素框时显示的方式。
 
-margin、border、padding、context。
+
 
 ### 定位
 position：relative 相对定位，以原有位置移动，保留占用原有定位
@@ -233,6 +233,11 @@ inline 内联元素，如span
 inline-block
 
 none 用来隐藏元素，不占据空间。visibili:hidden 只隐藏内容，占据空间。opaci：0 设置透明度
+
+### 盒子模型box
+margin、border、padding、context。
+
+
 
 #
 AJAX 是与服务器交换数据并更新部分网页的技术，在不重新加载整个页面的情况下
