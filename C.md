@@ -229,7 +229,7 @@ typedef struct Books
 ```
 #undef 取消已定义的宏
 #ifdef 如果宏已经定义，则返回真
-#inndef 如果宏没有定义，则返回真
+#ifndef 如果宏没有定义，则返回真
 
 #ifndef MESSAGE
    #define MESSAGE "You wish!"
@@ -242,9 +242,9 @@ __FILE__	这会包含当前文件名，一个字符串常量。
 __LINE__	这会包含当前行号，一个十进制常量。
 __STDC__	当编译器以 ANSI 标准编译时，则定义为 1。
 
-宏处理器运算符：
+宏处理器运算符
 宏延续运算符 \
-字符串常量化运算符 #
+字符串常量化运算符 #     把一个宏的参数转换为字符串常量
 #include <stdio.h>
 #define  message_for(a, b)  \
     printf(#a " and " #b ": We love you!\n")
@@ -275,12 +275,16 @@ defined 运算符   用来确定一个标识符是否已经使用 #define 定义
  只引用一次头文件:
 #ifndef HEADER_FILE
 #define HEADER_FILE
- 
+ 这种结构就是通常所说的包装器 #ifndef。当再次引用头文件时，条件为假，因为 HEADER_FILE 已定义。此时，预处理器会跳过文件的整个内容，编译器会忽略它。
  
  有条件引用
-  #define SYSTEM_H "system_1.h"
- ...
+ #define SYSTEM_H "system_1.h"
+
  #include SYSTEM_H
  YSTEM_H 可通过 -D 选项被您的 Makefile 定义。
  
 ```
+
+ ### 内存管理
+ 
+ 
