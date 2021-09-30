@@ -40,3 +40,46 @@ https://www.cnblogs.com/kevingrace/p/8671964.html
 文件： virustotal
 
 ### stunnel 建立加密隧道
+
+
+
+# PKI (Public-Key Infrastructure)
+
+X.509是定义公钥证书格式的标准
+
+一个X.509证书包含一个公钥和一个标识(主机名、组织或个人)，由证书颁发机构签名或自签名。
+### pem格式：Privacy Enhanced Mail
+```
+----BEGIN(label)-----
+...
+-----END(label)-----
+```
+
+可以存储 ".pem",".cer",".crt"(证书)或者".key"(公钥或私钥)
+
+### PKCS     (Public Key Cryptography Standards)
+
+
+### CSR    (certificate signing request )
+认证请求由三个主要部分组成:认证请求信息、签名算法标识符和认证请求信息上的数字签名。第一部分包含重要信息，包括公钥。
+
+有CSR必定有KEY，是成对的，CSR最终变成为证书crt，和私钥key配对使用。
+
+证书下发后，CSR就没有用了，只是在交时候需要。 
+
+### SSL Certificate
+即X.509 Certificate
+
+有几种不同的格式，例如 PEM，DER，PKCS#7 和 PKCS#12
+
+### PFX
+windows常用
+
+
+
+
+
+
+
+
+
