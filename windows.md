@@ -22,5 +22,25 @@ RDMA是一种host-offload, host-bypass技术，允许应用程序(包括存储)�
 
 # AD
 
-LDAP是轻量目录访问协议(LightweightDirectory Access Protocol)的缩写,一种树形结构数据库
+LDAP是轻量目录访问协议(LightweightDirectory Access Protocol)
+
+Active Directory 域 Services (AD DS)
+
+Active Directory 存储有关网络上对象的信息，并让管理员和用户可以更容易地使用这些信息。通常包括共享资源，例如服务器、卷、打印机以及网络用户和计算机帐户
+
+林、域树、子域都是活动目录(Active Directory)的逻辑单元。
+
+林：林中包含了单个或多个域树和单个或多个子域。
+
+dc-ou-cn
+
+计算机加入域时输入域管理员账号密码（有加入该域权限的账号）
+
+登录客户机可使用本地用户和域账号
+
+GPO 组策略  一级一级查询，靠后生效，冲突时靠后一个生效。  链接OU
+
+LSDOU顺序： （Local本地组策略—Site站点组策略—Domain域组策略—OU组织单位组策略）
+
+下级OU设置了阻止继承；上级设置了强制（到此为止，不再向后查询）
 
