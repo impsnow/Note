@@ -21,7 +21,7 @@ RDMA是一种host-offload, host-bypass技术，允许应用程序(包括存储)�
 
 
 # AD
-
+### 概念
 LDAP是轻量目录访问协议(LightweightDirectory Access Protocol)
 
 Active Directory 域 Services (AD DS)
@@ -34,6 +34,11 @@ Active Directory 存储有关网络上对象的信息，并让管理员和用户
 
 dc-ou-cn
 
+SRV记录：服务定位（SRV）资源记录，服务于AD
+
+SRV记录是域控制器注册的，通过这些记录，客户机能够找到wen.com这个域控制器
+
+### 配置
 计算机加入域时输入域管理员账号密码（有加入该域权限的账号）
 
 登录客户机可使用本地用户和域账号
