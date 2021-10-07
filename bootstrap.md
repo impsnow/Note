@@ -36,6 +36,9 @@ class="col-md-1 col-md-push-1" 往后偏移 有的话会被后列覆盖
 ## 常用样式
 标题
 
+提供了对应的类名，可为非标题元素设置样式，h1~h6
 
+<div class="h1">xx </div>
 
+副标题，small标签或small类
 
