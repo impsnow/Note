@@ -115,6 +115,7 @@ docker run -d -p 1000:5000 -v /data/registry:/var/lib/registry registry
 
 /v2/hanmei/httpd/
 
+Running a registry only accessible on localhost has limited usefulness. In order to make your registry accessible to external hosts, you must first secure it using TLS.
 
 ### 实现原理
 
