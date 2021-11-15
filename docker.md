@@ -83,12 +83,17 @@ docker network connect bridge centos1 //再添加另外一个bridge里的网卡
 组成：
 
 指令：
-- ADD :复制，会解压
+- ADD :复制，会解压压缩的tar文件
 - COPY : 复制
-- CMD: enterpoint 之前跑
-- ENTERPOINT: 
-- EXPOSE
-- VOLUME
+- CMD: 
+- ENTERPOINT:  可以在运行时传递参数
+- EXPOSE： 只是声明，方便理解，和docker run -P 会自动随机映射端口
+- VOLUME: 运行时如不指定会自动挂载匿名卷
+
+cmd & enterpoint ：https://zhuanlan.zhihu.com/p/30555962              
+- shell表示法会有/bin/sh -c ,PID 为1 ， PID为1的进程并不是在Dockerfile里面定义的ping命令, 而是/bin/sh命令. 如果从外部发送任何POSIX信号到docker容器, 由于/bin/sh命令不会转发消息给实际运行的ping命令, 则不能安全得关闭docker容器(参考更详细的文档:Gracefully Stopping Docker Containers).
+- 在写Dockerfile时, ENTRYPOINT或者CMD命令会自动覆盖之前的ENTRYPOINT或者CMD命令.在docker镜像运行时, 用户也可以在命令指定具体命令, 覆盖在Dockerfile里的命令（cmd直接在最后覆盖，entrypoint需要--entrypoint）.
+- entrypoint 和 cmd 可以组合使用，cmd在后面作为默认参数，docker run时传递参数
 
 ### 存储机制
 storage driver：
