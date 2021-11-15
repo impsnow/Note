@@ -47,6 +47,7 @@ docker commit container_name image_name
 docker history image_name
 
 docker build -t name:tag -f dockerfile Workdir
+#--force-rm  --no-cache
 
 docker tag old new
 
