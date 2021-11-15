@@ -13,7 +13,7 @@ overlay
 多个容器可共用一个基础镜像（lowerdir），运行时增加可写层（upperdir），
 容器中看到是merged（mount方式）
 
-# 网络
+### 网络
 网络模型：
 - host： 共用主机的ip和端口
 - container： 和指定的容器共享IP
@@ -33,7 +33,7 @@ systemctl restart docker
 ```
 
 
-docker 版本： CE（社区版）； EE（企业版）
+# docker 版本： CE（社区版）； EE（企业版）
 
 image_name： hub.docker.com/lishuo666/container:tag
 
