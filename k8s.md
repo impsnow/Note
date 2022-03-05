@@ -867,6 +867,15 @@ worker: 升级kubeadm ->
 
 https://kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
 
+## 部署策略
+
+默认：rollout
+
+其他： recreate
+
+手动方式实现其他： 
+- 蓝绿：一次只有一种activate，资源*2
+- 金丝雀：逐步升级
 
 
 
