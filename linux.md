@@ -123,6 +123,7 @@ Linux 在身份验证进程中使用 PAM（可插拔身份验证模块）作为�
 - 通过/lib/security/ 或 /lib64/security/ 中的各个 PAM 模块来实现，模块文件名一般都符合 pam_*.so 格式。
 - 为防止配置文件缺失可能导致的隐蔽故障与安全漏洞，应该确保存在一个严苛的默认配置(/etc/pam.d/other)。可以额外加入 pam_warn.so 模块，以确保系统管理员可以从系统日志(syslog)中获得警告信息。
 - 因为配置文件中的任何语法错误都会导致认证过程失败，所以务必确保语法正确。
+- 去除符号链接会有效禁用 pam-config
 
 TYPE  CONTROL MODULE_PATH  MODULE_ARGS
 
@@ -143,7 +144,7 @@ CONTROL：指执行步骤和规则
 常用模块：
 - pam_access.so：auth,account,password,session 。基于来源(主机/网络/终端/$DISPLAY/服务名)的访问控制./etc/security/access.conf
 - pam_debug.so：auth,account,password,session.调试PAM栈
-- pam_nologin.so:auth,account.禁止非 root 账户登录
+- pam_nologin.so:auth,account.pam_nologin is a PAM module that prevents users from logging into the system when /var/run/nologin or /etc/nologin exists. The contents of the file are displayed to the user. The pam_nologin module has no effect on the root user's ability to log in.
 - pam_motd.so:session.显示"今日消息"(motd)
 
 http://www.jinbuguo.com/linux/pam.html
