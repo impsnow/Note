@@ -146,6 +146,7 @@ CONTROL：指执行步骤和规则
 - pam_nologin.so:auth,account.禁止非 root 账户登录
 - pam_motd.so:session.显示"今日消息"(motd)
 
+http://www.jinbuguo.com/linux/pam.html
 
 
 
