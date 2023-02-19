@@ -9,8 +9,11 @@ namespace,veth pair,网桥，iptalbes+netfilter，路由
 
 同宿主机的容器通过网桥docker0通信
 
+容器默认使用bridge模式，每个容器创建一个veth pair，一端在网桥，一端映射到容器内eth0.容器mac在02：42：ac：11：00：00-02：42：ac：11：ff：ff
 
+POD之间通过私有IP通信
 
+每个prod都有一个pause容器，其余容器网络模型为container模式
 
 
 ## k8s网络 CNI容器通信网络接口
