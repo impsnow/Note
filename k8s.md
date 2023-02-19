@@ -1,7 +1,17 @@
 # 网络
+namespace,veth pair,网桥，iptalbes+netfilter，路由
+
+通过veth pair在不同namepace通信： ip netns exec netns1 ip link show
+
+网桥是虚拟的二层网络设备，通过mac表
+
 主机中有虚拟网桥docker0，每个容器分配一个虚拟网卡veth pair
 
 同宿主机的容器通过网桥docker0通信
+
+
+
+
 
 ## k8s网络 CNI容器通信网络接口
 有flannel， calico，weave，contiv等
