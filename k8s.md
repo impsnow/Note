@@ -19,11 +19,13 @@ POD之间通过私有IP通信
 ## k8s网络 CNI容器通信网络接口
 有flannel， calico，weave，contiv等
 
+cni插件包括CNI Plugin和IPAM（IP Address Management）Plugin，IPAM作为CNI的一部分，一起工作。
+
 宿主机网桥变为cni网桥：cni0
 
 CNI插件三种网络实现模式：
 
-overlay：隧道技术，容器网络和主机网络不通网段 flannel（UDP，vxlan），calico（IPIP）
+overlay：建立在underlay上的虚拟逻辑网络，容器网络和主机网络不通网段 flannel（UDP，vxlan），calico（IPIP）
 
 三层路由模式：容器网络和主机网络不通网段，容器互通基于主机间路由表打通 flannel（host-gw），calico（BGP）
 
@@ -43,11 +45,19 @@ calico默认维护的网络模式位 node-to-node mesh ，节点进行路由交�
 
 超过时用RR模式（Router Reflector），RR节点负责和所有节点通信路由信息，建议RR》=2
 
+BGP模式直接使用物理机作为虚拟路由器vRouter。
 
+- Felix：Calico Agent，运行在每个Node上，负责为容器设置网络资源（IP地址，路由，iptables等），保证跨主机容器网络互通
+- etcd：后端存储
+- BGP Client：负责把Felix在各个Node上设置的路由信息通过BGP协议广播到Calico网络
+- Route Reflector：通过一个或多个BGP RR来完成大规模集群的分级路由分发
+- CalicoCtl：命令行管理工具
 
 
 # flannel
+建立overlay network，底层协议默认是UDP，建立flannel0网桥，一端连docker0网桥，一端连lanneld进程，通过etcd管理docker0分配网段，修改docker启动参数。
 
+需要封包解包，产生额外开销
 # K8S
 
 每三个月发布一个新版本
@@ -748,7 +758,8 @@ k get pods mypod2-sa01 -o yaml |grep seviceAccountName
 
 - networkPolicy作用域只在某个namespace
 - pod与 Pod 运行所在的节点的通信总是被允许的， 无论 Pod 或节点的 IP 地址
-
+- 在from或to的配置中，namespaceSelector和podSelector可以单独设置，也可以组合配置。
+	
 基于三个标识符：
 - 其他被允许的pods
 - 被允许的命名空间
