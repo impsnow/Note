@@ -53,12 +53,34 @@ zypper up -y
 ```
 
 # shell
-脚本推出
+脚本退出
 exit 1
 
 set -e
 
 trap + kill
+
+BASH CONFIGURATION FILES FOR LOGIN SHELLS：
+  
+File                Description
+
+/etc/profile        Do not modify this file, otherwise your modifications may be destroyed during your next update!
+
+/etc/profile.local  Use this file if you extend /etc/profile
+
+/etc/profile.d/     Contains system-wide configuration files for specific programs
+
+~/.profile          Insert user specific configuration for login shells here
+
+
+BASH CONFIGURATION FILES FOR NON-LOGIN SHELLS：  
+/etc/bash.bashrc        Do not modify this file, otherwise your modifications may be destroyed during your next update.
+
+/etc/bash.bashrc.local  Use this file to insert your system-wide modifications for Bash only
+
+~/.bashrc               Insert user specific configuration here
+
+
 
 # supervisor
 
@@ -152,10 +174,76 @@ https://www.docs4dev.com/docs/zh/linux-pam/1.1.2/reference/
 
 
 
+# BOOT
 
 
+ firmware and hardware initialization process（BIOS/UEFI）-->boot loader GRUB 2 starts the kernel--> systemd targets
 
 
+PowerOn->BIOS/UEFI->bootloader->initramfs-> init on initramfs will excutes the systemd daemon
 
 
+The purpose of the boot loader is to load the kernel and the initial, RAM-based file system (initramfs).
 
+systemd take care: start initramfs to mount the root file system + initial process
+
+initrd/initramfs :initrd(initial RAM disk);initramfs (initial RAM file system);named changed since kernel 2.6.13
+        is an image file containing a root file system image which is loaded by the kernel and mounted from /dev/ram as the temporary root file system.
+        suse中initrd是initramfs的一个链接
+
+##  The Linux boot process
+  
+  https://documentation.suse.com/sles/15-SP5/html/SLES-all/cha-boot.html
+
+The Linux boot process consists of several stages, each represented by a different component:
+
+Section 16.2.1, “The initialization and boot loader phase”
+    
+Section 16.2.2, “The kernel phase”
+
+Section 16.2.3, “The init on initramfs phase”
+
+Section 16.2.4, “The systemd phase”
+
+### The initialization and boot loader phase
+After turning on the computer, the BIOS or the UEFI initializes the screen and keyboard, and tests the main memory. Up to this stage, the machine does not access any mass storage media. Subsequently, the information about the current date, time, and the most important peripherals are loaded from the CMOS values. When the boot media and its geometry are recognized, the system control passes from the BIOS/UEFI to the boot loader.
+
+On a machine equipped with a traditional BIOS, only code from the first physical 512-byte data sector (the Master Boot Record, MBR) of the boot disk can be loaded. Only a minimal GRUB 2 fits into the MBR. Its sole purpose is to load a GRUB 2 core image containing file system drivers from the gap between the MBR and the first partition (MBR partition table) or from the BIOS boot partition (GPT partition table). This image contains file system drivers and therefore is able to access /boot located on the root file system. /boot contains additional modules for GRUB 2 core as well as the kernel and the initramfs image. When it has access to this partition, GRUB 2 loads the kernel and the initramfs image into memory and hands control over to the kernel.
+
+When booting a BIOS system from an encrypted file system that includes an encrypted /boot partition, you need to enter the password for decryption twice. It is first needed by GRUB 2 to decrypt /boot and then for systemd to mount the encrypted volumes.
+
+On machines with UEFI the boot process is much simpler than on machines with a traditional BIOS. The firmware is able to read from a FAT formatted system partition of disks with a GPT partition table. This EFI system-partition (in the running system mounted as /boot/efi) holds enough space to host a fully-fledged GRUB 2 which is directly loaded and executed by the firmware.
+
+### The kernel phase
+The boot loader loads both the kernel and an initial RAM-based file system (initramfs) into memory and the kernel takes over.
+
+After the kernel has set up memory management and has detected the CPU type and its features, it initializes the hardware and mounts the temporary root file system from the memory that was loaded with the initramfs.
+
+The initramfs provides a minimal Linux environment that enables the execution of programs before the actual root file system is mounted.
+
+initramfs can be created by dracut tool.you need to re-generate it when Changing kernel variables.
+
+If you change the values of kernel variables via the sysctl interface by editing related files (/etc/sysctl.conf or /etc/sysctl.d/*.conf), the change will be lost on the next system reboot. Even if you load the values with sysctl --system at runtime, the changes are not saved into the initramfs file. You need to update it by proceeding as outlined in Procedure 16.1, “Generate an initramfs”.
+
+```bash
+grub2-install /dev/sda
+grub2-mkconfig -o /boot/grub2/grub.cfg
+dracut --regenerate-all --force
+```
+
+
+The main purpose of init on initramfs is to prepare the mounting of and access to the real root file system.
+
+## GRUB2
+
+/boot/grub2/grub.cfg : This file contains the configuration of the GRUB 2 menu items. It replaces menu.lst used in GRUB Legacy. grub.cfg should not be edited—it is automatically generated by the command grub2-mkconfig -o /boot/grub2/grub.cfg.
+
+/boot/grub2/custom.cfg: This optional file is directly sourced by grub.cfg at boot time and can be used to add custom items to the boot menu.
+
+/etc/default/grub: This file controls the user settings of GRUB 2 and normally includes additional environmental settings such as backgrounds and themes.
+
+Scripts under /etc/grub.d/: The scripts in this directory are read during execution of the command grub2-mkconfig -o /boot/grub2/grub.cfg. Their instructions are integrated into the main configuration file /boot/grub/grub.cfg.
+
+/etc/sysconfig/bootloader: This configuration file holds certain basic settings like the boot loader type and whether to enable UEFI Secure Boot support.
+
+After having manually edited GRUB 2 configuration files, you need to run grub2-mkconfig -o /boot/grub2/grub.cfg to activate the changes.

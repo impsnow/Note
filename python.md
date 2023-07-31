@@ -1,10 +1,25 @@
 *=		+=
 
+
+## 获取帮助
+
+help(xx)
+
+dir()
+
+xx.__doc__ 文档字符串
+
 ## 数据类型
 ```
+
+float:浮点数间存在不确定位数，运算比较时用round函数
+科学计数：4.3e-3=0.0043  9.6E5=960000.0
+
+
 string，list，tulpe，dict
 方法 函数
-string： 下标 切片[起始：结束：步长] .find() .count() .replace() .split() 
+string： 同时含有单双引号时可使用'''或转义\
+		下标 切片[起始：结束：步长] .find() .count() .replace() .split() 
 list: append() extend() insert(下标,xx) del  pop() remove(xx) sort() reserve() 嵌套
 tulpe：
 dict：dict01.get(XX,defualt)    del dict['Name']   .keys() .values() .items()

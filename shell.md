@@ -8,7 +8,7 @@ $* 和 $@ 都表示传递给函数或脚本的所有参数，不被双引号(" "
 
 ### echo
 -e 开启转义
-```
+```bash
 echo -e "\033[字背景颜色；文字颜色m字符串\033[0m" 
 
 printf "\e[颜色值m 文本\n"
@@ -36,7 +36,7 @@ printf "\e[颜色值m 文本\n"
 
 ##
 
-```
+```bash
 readonly bold=$(tput bold)
 readonly reset=$(tput sgr0)
 
@@ -62,3 +62,14 @@ log_warn(){
 log "Date/Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
 log_warn "Can't get GCP project name from gcloud config."
 ```
+
+### colume 
+按照统一的列宽显示输入数据
+
+(printf "PERM LINKS OWNER GROUP SIZE MONTH DAY HH:MM/YEAR NAME\n";  ls -l | sed 1d)|column -t
+
+### 变量
+
+local:  PROJECT="SLES"
+
+global\environment : export NAME="shuo"
