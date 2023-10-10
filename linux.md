@@ -2,10 +2,50 @@
 
 X 为一个协议，当前版本为11
 
-Xorg是X协议的软件实现， 即X协议的服务端, 如 xrdp ，vnc
 
-X client： 也是窗口管理器（WM），负责窗口移动，放大缩小。
-如KDE，GNOME，XFCE，LXDE
+- X server ： Xorg是X协议的软件实现， 即X协议的服务端, 如 xrdp ，vnc
+- DM  :（gdm kdm xdm等）
+Display Manager完成三个任务：1, X Server的启动; 2, X session的初始化; 3, X session的管理
+- WM
+Window Manager(桌面管理器，后简称WM)就是用来提供统一的GUI组件的(窗口、外框、菜单、按钮等)。
+- X Clients
+firefox，gedit等等都属于X Client程序。X Client部分值得考虑一下的就是DISPLAY环境变量。它主要用于远程X Client的使用。该变量表示输出目的地的位置，由三个要素组成：
+    [host]:display[.screen]
+
+
+广义上的Xclient是Xserver+DM+WM的集合，如KDE，GNOME，XFCE，LXDE
+
+
+
+
+
+## X11 forwarding
+What is X11 Forwarding?
+X11 forwarding is method of allowing a user to start a graphical applications installed on a remote Linux system and forward that application windows (screen) to the local system. The remote system need not to have X server or graphical desktop environment. Hence configuring X11 forwarding using SSH enables the users to securely run graphical applications over SSH session.
+
+remote-server: xorg-x11-xauth + sshd X11Forwarding + (xhost +)
+local-server:    $DISPLAY + using X11Forwardning + X Server
+
+### when using sudo   
+echo $DISPLAY, you may get a result eg":10.0" or "localhost:10.0"
+run as root user - "sudo su"
+export DISPLAY=:10.0 (the value you got in i)
+cp /home/davis/.Xauthority /root/ (replace davis to the user you using for SSH connection) 
+
+```bash
+tdcadmin:
+
+# cat .bashrc
+
+echo $DISPLAY >/tmp/DISPLAY
+root:
+
+# cat .bashrc
+sed -i "/setenv DISPLAY/d" /usr/sap/home/ttjadm/.cshrc
+echo "setenv DISPLAY `cat /tmp/DISPLAY`" >> /usr/sap/home/ttjadm/.cshrc
+cp -f /home/tdcadmin/.Xauthority /usr/sap/home/ttjadm/
+
+```
 
 # 终端
 /dev/tty teletypes控制台终端
@@ -247,3 +287,10 @@ Scripts under /etc/grub.d/: The scripts in this directory are read during execut
 /etc/sysconfig/bootloader: This configuration file holds certain basic settings like the boot loader type and whether to enable UEFI Secure Boot support.
 
 After having manually edited GRUB 2 configuration files, you need to run grub2-mkconfig -o /boot/grub2/grub.cfg to activate the changes.
+
+
+## CA
+Additional CA certificates can be added in /etc/pki/trust/anchors/ or /usr/share/pki/trust/anchors/ 
+
+The following command will apply certificates across the system:
+update-ca-certificates

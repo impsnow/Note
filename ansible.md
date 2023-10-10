@@ -25,6 +25,19 @@ ansible all -m script -a "../testdns.sh" -i ./hosts -k -b -u c5302650 --ssh-comm
 ansible all -m script -a "../testdns.sh" -i ./hosts -k -b -u c5302650 --ssh-common-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'|jq -r '.plays[].tasks[].hosts[].stdout_lines'
 
 
+ansible all -m file -a "path=/root/chef state=directory owner=root group=root" -i ./hosts -k -b -u smadmin --ssh-common-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
+
+ansible all -m copy -a "src=./files/sec_lxstartup.sh dest=/root/chef/sec_lxstartup.sh mode=700 owner=root group=root" -i ./hosts -k -b -u smadmin --ssh-common-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
+
+ansible all -m shell -a "startup --mitigations 40c416001cdda8c9de7373b5d8e3352d /chef/tdc/slc_adjust_tanium.sh /opt/tdc/slc_adjust_tanium.sh" -i ./hosts -k -b -u smadmin --ssh-common-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
+
+ansible test -m script -a "./vm.sh" -i ./hosts -k -b -u smadmin --ssh-common-args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
+
+
 ```
 
 ping.yml
@@ -237,5 +250,74 @@ Using encrypted variables and files.
 Encryption with Ansible Vault ONLY protects ‘data at rest’. Once the content is decrypted (‘data in use’), play and plugin authors are responsible for avoiding any secret disclosure, see no_log for details on hiding output and Steps to secure your editor for security considerations on editors you use with Ansible Vault.
 
 
+### Managing vault passwords
+
+Each time you encrypt a variable or file with Ansible Vault, you must provide a password. When you use an encrypted variable or file in a command or playbook, you must provide the same password that was used to encrypt it. 
+
+-- Choosing between a single password and multiple passwords
+-- Managing multiple passwords with vault IDs (is a label (a hint or nickname) to the encrypted content)
+
+Pass it with --vault-id to the ansible-vault command when you create encrypted content
+Include it wherever you store the password for that vault ID (see Storing and accessing vault passwords)
+Pass it with --vault-id to the ansible-playbook command when you run a playbook that uses content you encrypted with that vault ID
+
+```yaml
+# The vault ID is the last element before the encrypted content. For example:dev
+my_encrypted_var: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;dev
+          30613233633461343837653833666333643061636561303338373661313838333565653635353162
+          3263363434623733343538653462613064333634333464660a663633623939393439316636633863
+          61636237636537333938306331383339353265363239643939666639386530626330633337633833
+          6664656334373166630a363736393262666465663432613932613036303963343263623137386239
+          6330
+# When you set DEFAULT_VAULT_ID_MATCH, each password is only used to decrypt data that was encrypted with the same label.
+```
+
+n addition to the label, you must provide a source for the related password. The source can be a prompt, a file, or a script, depending on how you are storing your vault passwords. The pattern looks like this:
+```yaml
+--vault-id label@source
+
+```
+
+### Storing and accessing vault passwords
+You can memorize your vault password, or manually copy vault passwords from any source and paste them at a command-line prompt, but most users store them securely and access them as needed from within Ansible. You have two options for storing vault passwords that work from within Ansible: in files, or in a third-party tool such as the system keyring or a secret manager. If you store your passwords in a third-party tool, you need a vault password client script to retrieve them from within Ansible.
 
 
+
+
+
+
+
+
+
+
+
+
+
+## Ansible collections
+
+
+# AAP ansible automation platform
+
+https://access.redhat.com/documentation/en-us/red_hat_ansible_automation_platform/2.4
+
+Red Hat Ansible Automation Platform 2 replaces Ansible Tower and isolated nodes with automation controller and automation hub. Automation controller provides the control plane for automation through its UI, Restful API, RBAC, workflows and CI/CD integration, while Automation Mesh can be used for setting up, discovering, changing or modifying the nodes that form the control and execution layers.
+
+## Control plane:
+Hybrid nodes - this is the default node type for control plane nodes, responsible for automation controller runtime functions like project updates, management jobs and ansible-runner task operations. Hybrid nodes are also used for automation execution.
+
+Control nodes - control nodes run project and inventory updates and system jobs, but not regular jobs. Execution capabilities are disabled on these nodes.
+
+## Excution plane
+Hop nodes serve to communicate. Nodes in the execution plane only run user-space jobs, and may be geographically separated, with high latency, from the control plane.
+
+Execution nodes - Execution nodes run jobs under ansible-runner with podman isolation. This node type is similar to isolated nodes. This is the default node type for execution plane nodes.
+
+Hop nodes - similar to a jump host, hop nodes will route traffic to other execution nodes. Hop nodes cannot execute automation.
+
+## Peers
+Peer relationships define node-to-node connections.
+
+[execution_nodes:vars]
+ #connection is established *from* the execution nodes *to* the automationcontroller
+peers=automationcontroller
