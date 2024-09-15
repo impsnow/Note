@@ -25,7 +25,7 @@ cni插件包括CNI Plugin和IPAM（IP Address Management）Plugin，IPAM作为CN
 
 CNI插件三种网络实现模式：
 
-overlay：建立在underlay上的虚拟逻辑网络，容器网络和主机网络不通网段 flannel（UDP，vxlan），calico（IPIP）
+overlay：建立在underlay上的虚拟逻辑网络，容器网络和主机网络不通网段 flannel（UDP，vxlan），calico（vxlan，IPIP）
 
 三层路由模式：容器网络和主机网络不通网段，容器互通基于主机间路由表打通 flannel（host-gw），calico（BGP）
 
@@ -41,7 +41,15 @@ underlay网络：容器网络和主机网络不通网段，但地位相同，由
 
 
 ### calico 
-calico默认维护的网络模式位 node-to-node mesh ，节点进行路由交换会以2的N次方增长，应控制在50节点一下
+
+工作模式：
+- vxlan模式 网卡vxlan.calico 虚拟可扩展局域网，在内核态实现封装和解封装，从而实现隧道机制，构建overlay network
+- IPIP模式  网卡tunl0 封装原IP数据包到新的IP数据包中，可在不同的网络之间建立连接，如ipv4和ipv6之间；IPIP模式需要BGP来建立节点间的林立关系，VXLAN不需要。
+- BGP模式 去中心化自治路由协议，非封装的网络
+calicoctl get ippool -o wide --allow-version-mismatch
+
+ 
+calico默认维护的网络模式为IPIP .使用 node-to-node mesh ，节点进行路由交换会以2的N次方增长，应控制在50节点一下
 
 超过时用RR模式（Router Reflector），RR节点负责和所有节点通信路由信息，建议RR》=2
 
