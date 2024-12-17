@@ -221,7 +221,7 @@ kubectl exec -it mypod --container mycontainer -- /bin/bash
 
 patch修改时只能以json格式来改
 
-
+ 
 init container:
 - 运行一次就结束，必须成功才继续，可用来做一些初始化工资
 
@@ -230,7 +230,7 @@ sidecar容器：
 
 Static-Pod:
 - 由kubelet直接管理的，
-- staticPodPath: /etc/kubernetes/manifests  //kubelet配置文件中的配置
+- staticPodPath: /etc/kubernetes/manifests  //kubelet配置文件中的配置: etcd ,api-server,controller-manager，scheduler由kubelet系统服务启动
 
 
 ### Lalel
