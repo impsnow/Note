@@ -215,15 +215,16 @@ kubectl exec -it mypod --container mycontainer -- /bin/bash
 
 --show-labels
 
-
+-w 监视
 
 ```
 
 patch修改时只能以json格式来改
 
- 
+ 可在pod中加钩子，探针（启动探测，就绪探测，存活探测）
+
 init container:
-- 运行一次就结束，必须成功才继续，可用来做一些初始化工资
+- 运行一次就结束，必须成功才继续，可用来做一些初始化工作
 
 sidecar容器：
 可以日志代理/转发，service mesh，探活，其他辅助性工作
@@ -254,7 +255,18 @@ kubectl annotate  node k8s-master tel=561561
 kubectl annotate pod nginx author-
 ```
 
+### 指针探测
+启动探测，就绪探测，存活探测，
+就绪探测（ReadnessProbe）：httpGet exec tcpSocket
+存活探测（LivenessProbe）：
 
+
+
+initialDelauSeconds
+periodSeconds
+timeoutSeconds
+successThreshikd
+failureThreshold
 
 
 
@@ -670,6 +682,32 @@ Tolerations：
 - 可以容忍在有taints的上面运行
 - operator可以定义为Equal，Exists，使用Exists无需定义value
 
+# 认证 鉴权 准入控制
+
+## 认证模式： 基于HTTPS
+
+kubuadm安装时 controller manager,scheduler 与api server在同一台机器上
+
+Kubuconfig文件包含集群参数（ca证书，api server地址），客户端参数（证书，私钥），集群context信息（集群名称，用户名）。
+
+api server需要认证的类型：
+  组件
+    无需加密
+      controller manager,scheduler
+    需要加密
+      证书自动颁发
+        kubelet
+      证书手动颁发
+        kube-proxy,kubectl
+  Pod
+    SA(service account)
+
+
+## 鉴权 --auhtrorization-mode=RBAC
+
+## 准入控制
+- 额外功能的添加
+- 控制一些有权限但不合理的行为
 
 ## RBAC
 
@@ -702,12 +740,59 @@ k config use-context lishuo@kubernetes
 kubectl config view
 ```
 
+也可以用coreos公司的cfssl:
+
+```bash
+cd /etc/kubernetes/pki
+
+下载改名  cfssl cfssljson cfssl-certinfo
+
+创建user1.json模板
+
+cfssl gencert -ca=ca.crt -ca-key=ca.key -profile=kubernetes ./devuser.json|cfssljson -bare devuser.json  #会生成 devuser.csr devuser.pem devuser-key.pem
+
+# 设置集群参数
+export KUBE_APISERVER="https://172.20.0.113:6443"
+kubectl config set-cluster kubernetes \
+--certificate-authority=ca.crt \
+--embed-certs=true \
+--server=${KUBE_APISERVER} \
+--kubeconfig=devuser.kubeconfig
+
+# 设置客户端认证参数
+kubectl config set-credentials devuser \
+--client-certificate=devuser.pem \
+--client-key=devuser-key.pem \
+--embed-certs=true \
+--kubeconfig=devuser.kubeconfig
+
+# 设置上下文参数
+kubectl config set-context kubernetes \
+--cluster=kubernetes \
+--user=devuser \
+--namespace=dev \
+--kubeconfig=devuser.kubeconfig
+
+# 设置默认上下文
+kubectl config use-context kubernetes --kubeconfig=devuser.kubeconfig
+
+cp -f ./devuser.kubeconfig /root/.kube/config
+
+kubectl create rolebinding devuser-admin-binding --clusterrole=admin --user=devuser --namespace=dev
+```
+
+
+
 ### Role 和 ClusterRole
 
 - 绑定到user，group，service account
 - Role作用于namespace级别
 - ClusterRole作用于集群级别，用于集群组件授权
 - rolebounding 可以额绑定 clusterrole，按bounding里的namepace来
+
+role + rolebinding
+clusterrole + clusterrolebinding
+clusterrole + rolebinding
 
 ```YAML
 apiVersion: rbac.authorization.k8s.io/v1
@@ -718,7 +803,7 @@ metadata:
 rules:
 - apiGroups: ["apps"]   //k api-resources 查看
   # 在 HTTP 层面，用来访问 Secret 对象的资源的名称为 "secrets"
-  resources: ["deployments","daemonsets","statefulsets"]
+  resources: ["deployments","daemonsets","statefulsets","pods/log"]
   verbs: ["get", "watch", "list","create"]
 
 ---
@@ -738,12 +823,22 @@ roleRef:
 ```
 ```sh
 k get clusterrole
-
-
+view 允许读取大多数资源，除了role，rolebinding，secret
+edit  也不允许查看修改role，rolebinding
+admin 
+cluster-admin 完全控制权
 
 ```
 
+GET /api/v1/namespaces/{namespace}/pods/{pods}/log
+
+k8s系统保留用户：：
+system: UserX
+system: GroupsX
+
 ### serviceAccount
+
+包含三个部分：token，ca.crt，namespace
 
 - 为pod中的进程设计的
 - 只能作用于命名空间

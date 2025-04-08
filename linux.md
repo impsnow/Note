@@ -80,6 +80,14 @@ Ubuntu/debian：
 ```
  apt update
  apt upgrade -y
+
+ apt list --installed | grep nginx
+ dpkg-query -l | grep nginx
+ dpkg -s nginx
+ dpkg -l |grep nginx
+ apt show nginx
+ apt-show-versions | more
+ https://ubuntu.com/security/cves/about#security
 ```
 centos：
 ```
