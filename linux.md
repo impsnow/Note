@@ -88,6 +88,7 @@ Ubuntu/debian：
  apt show nginx
  apt-show-versions | more
  https://ubuntu.com/security/cves/about#security
+ https://www.debian.org/security/
 ```
 centos：
 ```
