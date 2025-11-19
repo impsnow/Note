@@ -303,3 +303,159 @@ Additional CA certificates can be added in /etc/pki/trust/anchors/ or /usr/share
 
 The following command will apply certificates across the system:
 update-ca-certificates
+
+
+## RockyLinux
+
+
+```bash
+# 网卡配置
+
+# cat /etc/NetworkManager/system-connections/ens160.nmconnection
+[ipv4]
+method=manual
+address1=192.168.66.11/24
+dns=114.114.114.114;8.8.8.8;
+gateway=192.168.66.2
+# cat /etc/NetworkManager/system-connections/ens192.nmconnection
+[connection]
+autoconnect=false
+
+# 调用 nmcli 重启设备和连接配置 或 systemctl restart NetworkManager
+
+nmcli dev r ens160
+nmcli con r ens160
+
+nmcli con mod ens160 ipv4.dns '114.114.114.114,8.8.8.8'
+nmcli con show ens160 | grep ipv4.dns
+nmcli con down ens160 && nmcli con up ens160
+
+hostnamectl hostname master1
+# Rocky 系统软件源更换
+sed -e 's| Amirrorlist=|#mirrorlist=|g' \
+-e
+'s|A#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun
+.com/rockylinux|g' \
+-i.bak \
+/etc/yum.repos.d/[Rr]ocky *. repo
+dnf makecache
+
+systemctl stop firewalld
+systemctl disable firewalld
+yum -y install iptables-services
+root@master1 ~]# systemctl start iptables.service 
+[root@master1 ~]# iptables -F
+[root@master1 ~]# systemctl enable iptables.service 
+[root@master1 ~]# service iptables save
+iptables: Saving firewall rules to /etc/sysconfig/iptables: [  OK  ]
+
+setenforce 0
+SELINUX=disabled  > edit /etc/selinux/config
+grubby --update-kernel ALL --args selinux=0
+set-timezone Asia/Shanghai
+
+# 加载 bridge
+yum install -y epel-release
+yum install -y bridge-utils
+modprobe br_netfilter
+echo 'br_netfilter'>>/etc/modules-load.d/bridge.conf
+echo 'net.bridge.bridge-nf-call-iptables=1'>> /etc/sysctl.conf
+echo 'net.bridge.bridge-nf-call-ip6tables=1'>> /etc/sysctl.conf
+echo 'net.ipv4.ip_forward=1'>>/etc/sysctl.conf
+sysctl -p
+#添加 docker-ce yum 源#中科大(ustc)
+sudo dnf config-manager --add-repo https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo
+cd /etc/yum.repos.d
+# 切换中科大源
+sed -i -e 's|download.docker.com|mirrors.ustc.edu.cn/docker-ce|g' docker-ce.repo
+yum install docker-ce
+
+cat > /etc/docker/daemon.json << EOF
+{
+  "data-root": "/data/docker",
+  "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn","https://mirror.iscas.ac.cn"],
+  "insecure-registries":["docker.rockylinux.cn"],
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+     "max-size": "100m",
+     "max-file": "10"
+  },
+  "storage-driver": "overlay2",
+  "live-restore": true,
+  "default-shm-size": "128M",
+  "max-concurrent-downloads": 10,
+  "max-concurrent-uploads": 10,
+  "debug": false
+}
+EOF
+systemctl daemon-reload
+systemctl enable docker
+systemctl restart docker
+
+wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.21/cri-dockerd-0.3.21.amd64.tgz
+tar -xf cri-dockerd-0.3.21.amd64.tgz
+cp cri-dockerd/cri-dockerd /usr/local/bin/
+
+#  https://gitee.com/mirrors_Mirantis/cri-dockerd/blob/master/packaging/systemd/cri-docker.service
+#  https://gitee.com/mirrors_Mirantis/cri-dockerd/blob/master/packaging/systemd/cri-docker.socket
+
+cp systemd/* /usr/lib/systemd/system/
+Edit: /usr/lib/systemd/system/cri-docker.service
+ExecStart=/usr/local/bin/cri-dockerd --network-plugin=cni --pod-infra-container-image=registry.aliyuncs.com/google_containers/pause:3.8
+
+systemctl daemon-reload
+systemctl enable cri-docker
+
+
+
+K8S网络 ，calico， Cilium（未来趋势）
+
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.34/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+EOF
+
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+sudo systemctl enable --now kubelet
+
+kubeadm config print init-defaults > init.yaml
+advertiseAddress: 192.168.66.11
+nodeRegistration:
+  criSocket: unix:///var/run/containerd/containerd.sock
+  name: master1
+imageRepository: registry.k8s.io
+kubernetesVersion: 1.34.0
+networking:
+  dnsDomain: cluster.local
+  serviceSubnet: 10.96.0.0/12
+  podSubnet: 10.244.0.0/16
+
+kubeadm init --config init.yaml |tee k8s.txt
+
+
+#OR
+kubeadm init --apiserver-advertise-address=192.168.66.11 --image-repository=registry.aliyuncs.com/google_containers --kubernetes-version 1.34.2 --service-cidr=10.10.0.0/12 --pod-network-cidr=10.244.0.0/16 --cri-socket=unix:///var/run/cri-dockerd.sock
+
+kubeadm join 192.168.66.11:6443 --token t9q06x.cwtq6inlpbovsa5r \
+    --discovery-token-ca-cert-hash sha256:23c79186ef13ac9dd4c32aeb7c1ae803cdfa8b93203701138fd9e0a59b1cf348 --cri-socket=unix:///var/run/cri-dockerd.sock
+
+https://docs.tigera.io/calico/latest/getting-started/kubernetes/self-managed-onprem/onpremises
+
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.31.0/manifests/calico-typha.yaml -o calico.yaml
+> CALICO_IPV4POOL_CIDR  
+> 修改为BGP模式
+- name: CALICO_IPV4POOL_IPIP
+  value: "off"
+
+
+kubectl apply -f calico.yaml
+
+echo 'source <(kubectl completion bash)' >>~/.bashrc
+source ~/.bashrc
+```
