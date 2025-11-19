@@ -81,6 +81,8 @@ Ubuntu/debian：
  apt update
  apt upgrade -y
 
+apt list --upgradable
+
  apt list --installed | grep nginx
  dpkg-query -l | grep nginx
  dpkg -s nginx
@@ -89,6 +91,8 @@ Ubuntu/debian：
  apt-show-versions | more
  https://ubuntu.com/security/cves/about#security
  https://www.debian.org/security/
+
+ grep bind9 /var/log/dpkg.log.1
 ```
 centos：
 ```
