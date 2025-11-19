@@ -33,9 +33,7 @@ overlay：建立在underlay上的虚拟逻辑网络，容器网络和主机网�
 			
 			flannel通过kubernates或etcd保存路由信息；calico通过BGP动态路由协议来分发整个集群路由信息
 			
-			BGP： border gateway protocol，实现大规模网络中节点路由信息同步共享的一种协议
-			
-			这时的calico的cni插件会在容器的veth pair设备添加路由规则，没有了docker0网桥
+			BGP： border gateway protocol，实现大规模网络中节点路由信息同步共享的一种协议,这时的calico的cni插件会在容器的veth pair设备添加路由规则，没有了docker0网桥
 			
 underlay网络：容器网络和主机网络不通网段，但地位相同，由底层网络互通，即底层路由器添加容器的路由表 calico（BGP）
 
@@ -43,9 +41,9 @@ underlay网络：容器网络和主机网络不通网段，但地位相同，由
 ### calico 
 
 工作模式：
-- vxlan模式 网卡vxlan.calico 虚拟可扩展局域网，在内核态实现封装和解封装，从而实现隧道机制，构建overlay network
+- vxlan模式 网卡vxlan.calico 虚拟可扩展局域网，在内核态实现封装和解封装，从而实现隧道机制，构建overlay network,是基于三层网络的二层互通，pod>vxlan.calico>IP>IP>calico.xxxx>pod
 - IPIP模式  网卡tunl0 封装原IP数据包到新的IP数据包中，可在不同的网络之间建立连接，如ipv4和ipv6之间；IPIP模式需要BGP来建立节点间的林立关系，VXLAN不需要。
-- BGP模式 去中心化自治路由协议，非封装的网络
+- BGP模式 (Border Gateway Protocol) 去中心化自治路由协议，非封装的网络
 calicoctl get ippool -o wide --allow-version-mismatch
 
  
@@ -57,7 +55,8 @@ BGP模式直接使用物理机作为虚拟路由器vRouter。
 
 - Felix：Calico Agent，运行在每个Node上，负责为容器设置网络资源（IP地址，路由，iptables等），保证跨主机容器网络互通
 - etcd：后端存储
-- BGP Client：负责把Felix在各个Node上设置的路由信息通过BGP协议广播到Calico网络
+- bird(BGP Client)：负责把Felix在各个Node上设置的路由信息通过BGP协议广播到Calico网络
+
 - Route Reflector：通过一个或多个BGP RR来完成大规模集群的分级路由分发
 - CalicoCtl：命令行管理工具
 
