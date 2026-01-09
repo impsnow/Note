@@ -135,8 +135,25 @@ namespace:pid,mount,network,user,UTS(主机名和域名),IPC(信号量，消息�
 
 --memory-swap: 设置内存加swap的使用配额
 
+### 清理
 
+docker image prune  # 移除悬空镜像
+docker image prune -a  # 移除所以未使用的镜像
 
+删除超过 24 小时创建的镜像：
+docker image prune -a --filter "until=24h"
+
+dockers container prune  #删除所有已停止的容器
+
+docker volume prune # 删除孤立的卷
+
+docker builder prune  #清除构建缓存
+
+docker network prune #To remove all unused networks:
+
+docker system prune -a  # 默认删除所有未被使用的资源，包括停止的容器，未被引用的镜像，构建缓存以及网络
+
+dcker system prune --volumes --all  # 同时清理volume
 
 
 

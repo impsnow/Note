@@ -181,10 +181,7 @@ upstream td-campaign {
 
 
 ### nginx 日志格式配置
-
-```
-    log_format  main  '$remote_addr $host $remote_user [$time_local] $request_method "$uri" "$query_string" '
-                      '$status $body_bytes_sent "$http_referer" $upstream_status $upstream_addr $request_time $upstream_response_time '
+232est_time $upstream_response_time '
                       '"$http_user_agent" "$http_x_forwarded_for" ';
 ```
 ### logstash 配置

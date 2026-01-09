@@ -463,3 +463,10 @@ kubectl apply -f calico.yaml
 echo 'source <(kubectl completion bash)' >>~/.bashrc
 source ~/.bashrc
 ```
+
+## 文件删除
+
+直接使用rm 会使IO飙升
+echo > file
+
+truncate -s 100M file  #截断
